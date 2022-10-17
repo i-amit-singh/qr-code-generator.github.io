@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator</title>
+    <style>
+        *:focus {
+            outline: none;
+        }
+
+        body {
+            overflow-x: hidden;
+            margin: 0px;
+            padding: 0px;
+            height: 100vh;
+            display: grid;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, rgb(0, 0, 0), transparent, rgb(0, 0, 0)), url(bg-s.png);
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        .card {
+            backdrop-filter: blur(10px);
+            background-color: rgba(2, 5, 18, 0.479);
+            border: 2px solid #06f;
+            border-radius: 10px;
+            color: white;
+            padding: 1rem;
+            padding-bottom: 10rem;
+            display: grid;
+            font-family: Arial, Helvetica, sans-serif;
+            outline: 8px solid rgb(2, 5, 18);
+        }
+
+        #user_data {
+            padding-left: 3rem;
+            border-right: 2px solid #06f;
+            border-left: 2px solid #06f;
+        }
+
+        #inputs input {
+            border: 1px solid #06f;
+            background-color: white;
+            padding: 0.5rem 0px 0.4rem 10px;
+        }
+
+        .field {
+            width: 25%;
+            border-right: 1px solid black !important;
+            border-bottom-left-radius: 20px;
+            border-top-left-radius: 20px;
+        }
+
+        #result {
+            display: grid;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+            min-width: 300px;
+        }
+
+        .qr-code {
+            outline: 2px solid #06f;
+            border: 8px solid rgb(2, 5, 18);
+            border-radius: 10px;
+            margin-top: 2rem
+        }
+
+        .delete {
+            border: 0px;
+            border-radius: 50%;
+            display: inline;
+            margin: 0px;
+            height: 33px;
+            width: 35px;
+            background-color: rgb(223 236 255);
+            transform: translate3d(-18px, 2px, 0px);
+            text-align: center;
+        }
+
+        #inputs div {
+            margin-bottom: 10px;
+            transition-duration: 1s;
+            transition: opacity;
+            animation: add;
+            animation-duration: 0.2s;
+            animation-timing-function: ease-out;
+
+        }
+
+        @keyframes add {
+            0% {
+                opacity: 0%;
+                height: 0%;
+                transform: scale(0);
+            }
+
+            100% {
+                opacity: 100%;
+                height: 100%;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes remove {
+            0% {
+                opacity: 100%;
+                height: 100%;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: 0%;
+                height: 0%;
+                transform: scale(0);
+            }
+        }
+
+        .btn:hover,
+        .btn:active {
+            border-color: #06f;
+            color: #06f;
+            fill: #06f;
+            background-color: white;
+        }
+
+        @media (min-width: 768px) {
+            body{
+                background: linear-gradient(135deg, rgb(0, 0, 0), transparent, rgb(0, 0, 0)), url(bg.png);
+            background-size: cover;
+            background-repeat: no-repeat;
+            }
+            .card {
+                grid-template-columns: 2fr 1fr;
+                padding: 2rem 0rem 2rem 2rem;
+                margin-inline: 2rem;
+            }
+
+        }
+        @media (min-width: 1300px) {
+            body {
+                background-size: 126%;
+                background-position: right top;
+            }
+        }
+
+        .add-btn button {
+            background-color: inherit;
+            font-size: medium;
+            font-weight: bolder;
+            color: #06f;
+            border: 0px;
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+        }
+
+        .add-btn button:hover {
+            background-color: rgba(0, 0, 0, 0.297);
+        }
+
+        textarea {
+            resize: none;
+            padding: 0.5rem;
+            border-radius: 10px;
+            border: 1px solid #06f;
+            background-color: white;
+            width: 55%;
+        }
+
+        input[type="color"] {
+            border: 2px solid blue;
+            border-radius: 20px;
+            height: 2rem;
+        }
+
+        #color input {
+            margin: 1rem 1rem 1rem 0rem;
+        }
+
+        #format {
+            border: 2px solid blue;
+            border-radius: 20px;
+            height: 2rem;
+            margin-top: 1rem;
+            width: max-content;
+            font-size: medium;
+            font-weight: bolder;
+            color: #06f;
+            padding-left: 1rem;
+        }
+
+        span {
+            display: inline-block;
+        }
+
+        .btn {
+            background-color: #3498DB;
+            color: white;
+            padding: 16px 40px;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+
+        .dropdown .btn {
+            width: 100%;
+
+        }
+
+        .dropdown:hover .btn {
+            background-color: #184969 !important;
+        }
+
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: inherit;
+            width: 100%;
+            overflow: auto;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+            z-index: 1;
+        }
+
+        .dropdown-content button {
+            color: black;
+            padding: 5px;
+            width: 100%;
+            text-decoration: none;
+            display: block;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .dropdown button:hover {
+            background-color: #ddd;
+        }
+
+        .center {
+            text-align: center;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="card">
+        <form id="user_data">
+            <h1><img src="qr-code.png" alt="qr"> QR Code Generator</h1>
+            <div id="inputs">
+                <div><input type="text" class="field" placeholder="Field name" /><input type="text" class="content"
+                        placeholder="Enter content" /><button type="button" class="delete"><img src="trash.png"
+                            height="18px"></button></div>
+                <div><textarea rows="4" placeholder="Enter text data"></textarea><button type="button"
+                        class="delete"><img src="trash.png" height="18px"></button></div>
+            </div>
+            <div class="add-btn">
+                <button type="button" onclick="addInput()">Data Input +</button>
+                <button type="button" onclick="addText()">Text Area +</button>
+            </div>
+            <div id="color">
+                <span>
+                    <label for="bg_color">Background Color :</label>
+                    <input type="color" id="bg_color" value="#ffffff" list="color-list">
+                </span>
+                <span>
+                    <label for="qr_color">QR Color :</label>
+                    <input type="color" id="qr_color" value="#000000" list="color-list">
+                </span>
+                <datalist id=color-list>
+                    <option>#ffffff</option>
+                    <option>#ff0000</option>
+                    <option>#ff7700</option>
+                </datalist>
+            </div>
+            <div>
+                <label for="format">File Format :</label>
+                <select name="format" id="format">
+                    <option value="png" selected>PNG</option>
+                    <option value="jpeg">JPEG</option>
+                    <option value="jpg">JPEG</option>
+                    <option value="svg">SVG</option>
+                    <option value="eps">EPS</option>
+
+                </select></div>
+            <div class="center">
+                <button class="btn" type="button" id="generate">Generate</button>
+            </div>
+        </form>
+        <div id="result">
+            <img src="qr-code-l.png" height="200px" class="qr-code" >
+            <div id="download" class="dropdown">
+                <button class="btn">Download <img src="download.png" height="21px"></button>
+                <div id="myDropdown" class="dropdown-content">
+                    <button onclick="download(64)">64x64px</button>
+                    <button onclick="download(128)">128x128px</button>
+                    <button onclick="download(256)">256x256px</button>
+                    <button onclick="download(512)">512x512px</button>
+                    <button onclick="download(1024)">1024x1024px</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.js">
+    </script>
+
+    <script>
+        $('#download').hover(function () {
+            $(this).closest('.dropdown').find('.dropdown-content').fadeToggle();
+            $(this).closest('.dropdown').find('.dropdown-content').find('button').fadeToggle();
+        });
+
+        function addInput() {
+            document.getElementById('inputs').insertAdjacentHTML("beforeend",
+                `<div><input type="text" class="field" placeholder="Field name" /><input type="text" class="content" placeholder="Enter content" /><button type="button" class="delete"><img src="trash.png" height="18px"></button></div>`
+            );
+        }
+
+        function addText() {
+            document.getElementById('inputs').insertAdjacentHTML("beforeend",
+                `<div><textarea rows="4" placeholder="Enter text data"></textarea><button type="button" class="delete"><img src="trash.png" height="18px"></button></div>`
+            );
+
+        }
+        $(document).on('click', '.delete', function () {
+            setTimeout(() => $(this).closest('div').remove(), 200);
+            $(this).closest('div').css({
+                "animation": "remove 0.2s ease-in-out"
+            });
+        });
+
+        function htmlEncode(value) {
+            var data = "";
+            var field_value = document.querySelectorAll('.field');
+            var content_value = document.querySelectorAll('.content');
+            var text_value = document.querySelectorAll('textarea');
+            for (let i = 0; i < field_value.length; i++) {
+                if (field_value[i].value != "" && content_value[i].value != "") {
+                    data += field_value[i].value + " : " + content_value[i].value + "%0A";
+                }
+            }
+            for (let i = 0; i < text_value.length; i++) {
+                if (text_value[i].value != "") {
+                    data += text_value[i].value + "%0A";
+                }
+            }
+            return data;
+        }
+        async function downloadImage(imageSrc) {
+            const image = await fetch(imageSrc)
+            const imageBlog = await image.blob()
+            const imageURL = URL.createObjectURL(imageBlog)
+            const link = document.createElement('a')
+            link.href = imageURL
+            link.download = 'qr-code'
+            document.body.appendChild(link)
+            link.click()
+            document.body.removeChild(link)
+        }
+
+        function bgcolor() {
+            return document.getElementById('bg_color').value.substr(1);
+        }
+
+        function qrcolor() {
+            return document.getElementById('qr_color').value.substr(1);
+        }
+
+        function format() {
+            return document.getElementById('format').value;
+        }
+
+        function getUrl(s) {
+            return 'http://api.qrserver.com/v1/create-qr-code/?data=' + htmlEncode() + '&size=' + s + 'x' + s +
+                '&color=' + qrcolor() + '&bgcolor=' + bgcolor() + '&margin=10&format=' + format();
+        }
+        $('#generate').click(function () {
+            if (htmlEncode() != "") {
+                $('.qr-code').attr('src', getUrl(200));
+            } else {
+                alert("!!! Enter some data !!!");
+            }
+        });
+
+        function download(s) {
+            if (htmlEncode() != "") {
+            downloadImage(getUrl(s));
+            }
+            else {
+                alert("!!! Enter some data !!!");
+            }
+        }
+    </script>
+</body>
+
+</html>
